@@ -1,0 +1,14 @@
+spring:
+  redis:
+    host: localhost
+#    password:
+    port: 6379
+    database: 2
+
+wxpush:
+  #  企业id
+  corpid: 填写你的企业id
+  #  企业应用的id
+  agentid: 企业应用的id
+    #  应用的凭证密钥
+  corpsecret: 应用的凭证密钥
