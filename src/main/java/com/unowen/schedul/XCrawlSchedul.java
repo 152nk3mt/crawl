@@ -2,8 +2,6 @@ package com.unowen.schedul;
 
 import com.unowen.crawl.XCrawl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
@@ -15,13 +13,13 @@ import java.util.Date;
  * @Description TODO
  * @Version 1.0
  **/
-@Component
+//@Component
 public class XCrawlSchedul {
 
     @Autowired
     private XCrawl xCrawl;
 
-    @Scheduled(cron = "0/30 * * * * *")
+//    @Scheduled(cron = "0/30 * * * * *")
     public void execute(){
         xCrawl.getLi("https://906k.cn");
         System.out.println(new Date());

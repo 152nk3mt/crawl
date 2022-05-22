@@ -12,3 +12,10 @@ wxpush:
   agentid: 企业应用的id
     #  应用的凭证密钥
   corpsecret: 应用的凭证密钥
+
+ql:
+  baseUrl: ip:端口
+  #  baseUrl: 1.14.252.104:7501
+  clientId: 青龙应用client
+  clientSecret: 青龙应用clientSecret
+  logFilePath: /ql2/log/KingRan_KR_jd_jddj_fruit

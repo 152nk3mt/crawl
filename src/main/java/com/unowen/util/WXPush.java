@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class WXPush {
     @Autowired
     private static RedisService redisService;
+
     @Autowired
     public void setRedisService(RedisService redisService) {
         WXPush.redisService = redisService;
@@ -33,22 +34,28 @@ public class WXPush {
 
     //企业ID
     public static String CORPID;
+    //企业应用的id
+    public static Integer AGENTID;
+    //应用的凭证密钥
+    public static String CORPSECRET;
+//
+//    static {
+//        CORPID = "ww95f35899d2f3a23b";
+//        AGENTID = 1000006;
+//        CORPSECRET = "W7OFgogsgNoq2W-HrCJaQhcBmL5xFdYBs4H3Kfeio4o";
+//    }
     @Value("${wxpush.corpid}")
-    public void setRedisService(String corpid) {
+    public void setCORPID(String corpid) {
         CORPID = corpid;
     }
 
-    //企业应用的id
-    public static Integer AGENTID;
     @Value("${wxpush.agentid}")
     public void setAgentid(Integer agentid) {
         AGENTID = agentid;
     }
 
-    //应用的凭证密钥
-    public static String CORPSECRET;
     @Value("${wxpush.corpsecret}")
-    public void setCorpsecret(String corpsecret){
+    public void setCorpsecret(String corpsecret) {
         CORPSECRET = corpsecret;
     }
 
@@ -59,51 +66,52 @@ public class WXPush {
     private static String sendUrl = "https://qyapi.weixin.qq.com/cgi-bin/message/send";
 
     /**
-     *
      * @param map 一个key占一行
      * @return
      */
-    public static boolean sendText(Map<String,Object> map, String touser,String toparty) {
+    public static boolean sendText(Map<String, Object> map, String touser, String toparty) {
         String accessToken = getAccessToken();
         JSONObject text = setContent(map);
-        String resp = HttpUtil.post(sendUrl + "?access_token=" + accessToken, oprateParam(touser,toparty, text));
+        String resp = HttpUtil.post(sendUrl + "?access_token=" + accessToken, oprateParam(touser, toparty, text));
         JSONObject respJson = JSONUtil.parseObj(resp);
         if (respJson.getInt("errcode") != 0) {
             log.error("发送消息失败！");
             log.error(resp);
-           return false;
+            return false;
         }
         return true;
     }
 
     /**
      * 用于组装发送参数
+     *
      * @param touser 发给谁
-     * @param text 内容
+     * @param text   内容
      * @return 拼装后的参数字符串
      */
-    private static String oprateParam(String touser,String toparty, Object text) {
+    private static String oprateParam(String touser, String toparty, Object text) {
         JSONObject param = new JSONObject();
         param.putOnce("msgtype", "text");
         param.putOnce("agentid", AGENTID);
         param.putOnce("text", text);
         if (touser != null)
-        param.putOnce("touser", touser);
+            param.putOnce("touser", touser);
         if (toparty != null)
-        param.putOnce("toparty", toparty);
+            param.putOnce("toparty", toparty);
         return param.toString();
     }
 
     /**
      * 转换参数：将map转为微信消息类型字符串
+     *
      * @param map
      * @return
      */
-    private static JSONObject setContent(Map<String,Object> map){
+    private static JSONObject setContent(Map<String, Object> map) {
         JSONObject jsonObject = new JSONObject();
         StringBuffer bf = new StringBuffer();
         Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Map.Entry<String, Object> next = iterator.next();
             bf.append(next.getKey()).append("：").append(next.getValue()).append("\n");
         }
@@ -125,7 +133,7 @@ public class WXPush {
             accessToken = respJson.getStr("access_token");
             Long expiresIn = respJson.getLong("expires_in");
             redisService.set(SysConstant.WXPushToken, accessToken, expiresIn, TimeUnit.SECONDS);
-        }else{
+        } else {
             log.error("wxpush获取token失败：" + resp);
         }
         return accessToken;
